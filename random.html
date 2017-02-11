@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="grid.css" media="screen" title="no title" charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <div class="container" id="root">
+    </div>
+    <script>
+
+
+      var containerDiv = document.getElementById("root");
+      document.body.setAttribute("onkeydown", "moveByInput(event)");
+      var snakeBody = [];
+      var snakeVel = [];
+      for(var i=0; i<100; i++) {
+        var newCell = document.createElement("div");
+        newCell.className = "cell";
+        newCell.setAttribute("onclick", "setActive(this)");
+        var cellSpace = document.createTextNode("");
+        newCell.appendChild(cellSpace);
+        containerDiv.appendChild(newCell);
+      }
+      
+      var allCells = document.body.getElementsByClassName("cell");
+      
+      function setActive(cell) {
+
+        for(var i = 0; i<allCells.length;i++) {
+          allCells[i].classList.remove("active");
+        }
+        cell.classList.add("active");
+      }
+      
+      function createSnake() {
+    var row = Math.floor(Math.random() * rows);
+    var col = Math.floor(Math.random() * cols);
+
+    var head = getCell(row, col).addClass('active-head');
+    snake.push(head);
+    snakeVel.push(initialVel);
+    createTail(head, [0, -1], 4);
+  };
+      
+      function createSnake(x,y,width) {
+        
+      var row = Math.floor(Math.random() * rows);
+      var col = Math.floor(Math.random() * cols);
+      var head = getCell(row, col).addClass('active-head');
+        snakeBody.push(head);
+        snakeVel.push(initialVel);
+        createTail(head, [0, -1], 4);
+
+      }
+      createSnake(getrandomNumber(0,9), getrandomNumber(0,9),10);
+
+    function createTail(head, dir, numCells) {
+        for(var i = 1; i <= numCells; i++) {
+          var dx = i * dir[0];
+          var dy = i * dir[1];
+          var tailRow = head.data('row') + dx;
+          var tailCol = head.data('col') + dy;
+          tailRow = (tailRow + rows) % rows;
+          tailCol = (tailCol + cols) % cols;
+          var tail = getCell(tailRow, tailCol).addClass('active');
+          snake.push(tail);
+          snakeVel.push(initialVel);
+        }
+      }
+
+    function getCell(row, col) {
+      var selector = '[data-row=' + row + '][data-col=' + col + ']';
+      return $(selector);
+    }
+
+    function move() {
+        resetGrid();
+        var tempSnake = [];
+        var tempSnakeVel = [];
+        tempSnakeVel.push(initialVel);
+        for(var i = 0; i < snake.length; i++) {
+          if (i !== 0) {
+            var prevIndex = i - 1;
+            tempSnakeVel.push(snakeVel[prevIndex]);
+          }
+        }
+        snakeVel = tempSnakeVel;
+        for(var i = 0; i < snake.length; i++) {
+          var dx = snakeVel[i][0];
+          var dy = snakeVel[i][1];
+          var cell = snake[i];
+          var tailRow = cell.data('row') + dx;
+          var tailCol = cell.data('col') + dy;
+          tailRow = (tailRow + rows) % rows;
+          tailCol = (tailCol + cols) % cols;
+          var snakeClass = i === 0 ? 'active-head' : 'active';
+          tempSnake.push(getCell(tailRow, tailCol).addClass(snakeClass));
+        }
+        snake = tempSnake;
+      }
+
+      
+    function getrandomNumber(min, max) { 
+      max = Math.floor(max);
+      min = Math.ceil(min);
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    function move() {
+        movePoint = new Object;
+          
+        if(snakeBody[0].pos.x%9==0){
+            snakeBody[0].pos.x-=9;
+        }
+        movePoint.x = snakeBody[0].x;
+        movePoint.y = snakeBody[0].y+1;
+        resetGrid();
+          
+        snakeBody = [];
+        createSnake(movePoint.x,movePoint.y,10);    
+    }
+  function resetGrid() {
+    for(var i = 0; i < cols; i++) {
+      for(var j = 0; j < cols; j++) {
+        getCell(i, j).removeClass('active').removeClass('active-head');
+      }
+    }
+  }
+    //setInterval(move, 500)
+    </script>
+  </body>
+</html>
